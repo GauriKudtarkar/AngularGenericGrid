@@ -1,0 +1,53 @@
+<div>
+    <fieldset>
+        <legend> Search Criteria</legend>
+        <div class="row">
+            <div *ngFor="let head of Rules.headers">
+                <ng-container *ngIf="head.IsSearchable">
+
+                    <div class="col-sm-4">
+                        <label>{{head.Label}}</label>
+                        <input type="text" [attr.id]="head.Name" [(ngModel)]="head.SearchedValue" />
+                    </div>
+
+                </ng-container>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <button (click)="SearchGrid($event)">Search</button>
+            <button (click)="ClearSearch($event)">Clear</button>
+        </div>
+    </fieldset>
+</div>
+
+<hr> 
+<div *ngIf="Rules.HasRows">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                 <th *ngFor="let head of Rules.headers"><input type="text" [attr.id]="head.Name" class="form-control" [attr.placeholder]="head.Label" [(ngModel)]="head.SearchedValue"></th> 
+                <!-- <th *ngFor="let head of Rules.headers">{{head.Label}}</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let row of Rules.Rows | dataTableFilter: GetFilterValue()">
+                <tr [className]="setRowClass(row)">
+                    <ng-container *ngFor="let head of Rules.headers">
+                        <td *ngIf="!head.IsAction"> {{getValue(row,head.Name)}}</td>
+
+                        <td *ngIf="head.IsAction">
+                            <div style="float:left" *ngFor="let action of row.Actions">
+                                <div [className]="setClass(action)" [attr.title]="action"></div>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="!Rules.HasRows">
+    No Records Found
+</div>
